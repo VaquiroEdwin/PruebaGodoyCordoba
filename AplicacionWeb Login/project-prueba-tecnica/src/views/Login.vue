@@ -27,7 +27,7 @@
 
 
 <script>
-import axios from 'axios'; // Importación corregida
+import axios from 'axios'; 
 
 export default {
   name: 'LoginPage', // Cambiado a LoginPage para mayor claridad
