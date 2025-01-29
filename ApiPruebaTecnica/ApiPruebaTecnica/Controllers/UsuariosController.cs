@@ -15,16 +15,15 @@ namespace ApiPruebaTecnica.Controllers
     public class UsuariosController : ControllerBase
     {
         private readonly GodoyCordobaContext _context;
-        private readonly ILogger<UsuariosController> _logger;
 
-        public UsuariosController(GodoyCordobaContext context, ILogger<UsuariosController> logger)
+
+        public UsuariosController(GodoyCordobaContext context)
         {
             _context = context;
-            _logger = logger;   
         }
 
         // GET: api/Usuarios
-        [HttpGet]
+        [HttpGet("ListarUsuarios")]
         public async Task<ActionResult<IEnumerable<Usuario>>> ListarUsuarios()
         {
             try
@@ -38,7 +37,6 @@ namespace ApiPruebaTecnica.Controllers
             }
             catch(Exception error)
             {
-                _logger.LogError(error, "Error al obtener lista de usuarios");
                 return StatusCode(500, "Ocurrió un error interno al procesar la solicitud, por favor vuelve a intentarlo");
             }
         }
@@ -60,7 +58,7 @@ namespace ApiPruebaTecnica.Controllers
             catch(Exception error)
             {
                 // Log para tener en cuenta los registros y posibles excepciones
-                _logger.LogError(error, "Error al obtener el usuario con ID {Id}", id);
+                //_logger.LogError(error, "Error al obtener el usuario con ID {Id}", id);
 
                 // Return a 500 Internal Server Error with a generic error message
                 return StatusCode(500, "Ocurrió un error interno al procesar la solicitud, por favor vuelve a intentarlo");
@@ -69,7 +67,7 @@ namespace ApiPruebaTecnica.Controllers
         }
 
         //crear usuario en la tabla Usuarios
-        [HttpPost]
+        [HttpPost("CrearUsuario")]
         public async Task<IActionResult> CrearUsuario(Usuario usuario)
         {
             try
@@ -88,36 +86,35 @@ namespace ApiPruebaTecnica.Controllers
             }
             catch (Exception error)
             {
-                _logger.LogError(error, "Error al ecrear un usuario en la tabla de la base de datos.");
+                //_logger.LogError(error, "Error al ecrear un usuario en la tabla de la base de datos.");
                 return StatusCode(500, "Ocurrió un error interno al procesar la solicitud, por favor vuelve a intentarlo");
             }
         }
 
         //Editar un usuario existente en la tabla Usuarios
-        [HttpPost]
-        public async Task<IActionResult> EditarUsuario(Usuario usuarioNuevo)
+        [HttpPost("EditarUsuario")]
+        public async Task<IActionResult> EditarUsuario(Usuario usuario)
         {
             try
             {
-                var usuarioExistente = await _context.Usuarios.FindAsync(usuarioNuevo.Cedula);       
-
-                if(usuarioExistente == null)
+            
+                if(!UsuarioExists(usuario.Cedula))
                 {
-                    return NotFound($"El usuario con cédula {usuarioNuevo.Cedula} no existe en el sistema, por favor valide");       
+                    return NotFound($"El usuario con cédula {usuario.Cedula} no existe en el sistema, por favor valide");       
                 }
 
-                usuarioNuevo.Puntaje = usuarioNuevo.CalcularPuntaje();       
-                usuarioNuevo.FechaAcceso = usuarioExistente.FechaAcceso;  // respetar la fecha de acceso que tenía el usuario  
+                usuario.Puntaje = usuario.CalcularPuntaje();       
+                usuario.FechaAcceso = DateTime.Now;  // respetar la fecha de acceso que tenía el usuario  
                 
-                _context.Usuarios.Update(usuarioNuevo);  
+                _context.Usuarios.Update(usuario);  
 
                 await _context.SaveChangesAsync();
 
-                return Ok("Usuario creado con éxito");
+                return Ok("Usuario actualizado con éxito");
             }
             catch (Exception error)
             {
-                _logger.LogError(error, "Error al ecrear un usuario en la tabla de la base de datos.");
+                //_logger.LogError(error, "Error al ecrear un usuario en la tabla de la base de datos.");
                 return StatusCode(500, "Ocurrió un error interno al procesar la solicitud, por favor vuelve a intentarlo");
             }
         }
@@ -141,12 +138,13 @@ namespace ApiPruebaTecnica.Controllers
             }
             catch(Exception error)
             {
-                _logger.LogError(error, "Error al eliminar un usuario en la tabla de la base de datos.");
+                //_logger.LogError(error, "Error al eliminar un usuario en la tabla de la base de datos.");
                 return StatusCode(500, "Ocurrió un error interno al procesar la solicitud, por favor vuelve a intentarlo"); 
             }
            
         }
 
+        //validar existencia de un User
         private bool UsuarioExists(long id)
         {
             try
@@ -156,12 +154,11 @@ namespace ApiPruebaTecnica.Controllers
             }
             catch (Exception error)
             {
-                _logger.LogError(error, "Error al comprobar la existencia de un usuario en la tabla de la base de datos.");
+                //_logger.LogError(error, "Error al comprobar la existencia de un usuario en la tabla de la base de datos.");
                 return false;
             }
          
         }
-
 
     }
 }

@@ -19,29 +19,29 @@ public partial class Usuario
 
     public long CalcularPuntaje()
     {
-        var CaracteresNombre = $"{Nombre} {Apellido}".Length;
-        int puntaje;      
+        var CaracteresNombre = $"{Nombre}{Apellido}".Length;
+        int puntaje = 0;      
 
         if(CaracteresNombre > 10)
         {
-            puntaje = +20;
+            puntaje += 20;
         }
         else if(CaracteresNombre > 5)
         {
-            puntaje = +10;  
+            puntaje += 10;  
         }
 
-        if(Email.Equals("gmail.com", StringComparison.OrdinalIgnoreCase))
+        if(Email.Contains("gmail.com", StringComparison.OrdinalIgnoreCase))
         {
-            puntaje = +40;   
+            puntaje += 40;   
         }
-        else if(Email.Equals("hotmail.com",StringComparison.OrdinalIgnoreCase))
+        else if(Email.Contains("hotmail.com",StringComparison.OrdinalIgnoreCase))
         {
-            puntaje = +30;  
+            puntaje += 30;  
         }   
         else
         {
-            puntaje = +10;  
+            puntaje += 10;  
         }
 
 

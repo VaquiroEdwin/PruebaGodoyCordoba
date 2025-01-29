@@ -1,3 +1,4 @@
+using ApiPruebaTecnica.Controllers;
 using ApiPruebaTecnica.Modelo;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +11,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<GodoyCordobaContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("BdGodoyCordoba")));            
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BdGodoyCordoba")));
+
+
 
 var app = builder.Build();
 
